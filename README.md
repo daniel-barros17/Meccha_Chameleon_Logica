@@ -1,2 +1,5 @@
 # Meccha_Chameleon_Logica
 Projeto da disciplina de lógica da UFCG. Modelagem em alloy para um cenário hipotético do jogo Meccha Chameleon
+
+Especificação da modelagem:
+Uma arena digital organiza partidas de um jogo de esconde-esconde em que jogadores assumem papéis diferentes durante cada rodada. Em uma rodada, cada jogador pode ser classificado como Camuflado ou Caçador, mas nunca pode ocupar os dois papéis ao mesmo tempo. Toda rodada deve ter pelo menos um caçador e pelo menos um camuflado. Cada camuflado escolhe exatamente uma área do mapa para se esconder, como parede, chão, objeto ou cenário decorativo. Cada área do mapa possui uma cor predominante, e o camuflado deve usar uma pintura da mesma cor da área escolhida. Um camuflado pode estar sem pose definida enquanto ainda estiver se preparando, mas, ao final da preparação, todo camuflado deve possuir exatamente uma pose. Um caçador pode encontrar vários camuflados durante a rodada, mas um camuflado só pode ser encontrado uma única vez. Camuflados já encontrados não podem continuar marcados como escondidos. A rodada só pode ser considerada finalizada quando todos os camuflados forem encontrados.
