@@ -49,23 +49,36 @@ sig Sim, Nao extends Terminou {}
 
 -- Rodada
 fact SemRodadasSimultaneas {
-	lone r:Rodada | r.acabou = Nao
+	lone r:Rodada | r.acabou in Nao
 }
 
 fact CardinalidadeRodada {
 	all r: Rodada | #(r.cacador + r.camuflado) = #r.jogadores
 }
 
-fact JogadorNaRodadaTemFuncao {
-	all j: Jogador | all r: Rodada | one f: Funcao | j in r.jogadores implies f in j.papel and f in (r.cacador + r.camuflado)
-}
-
 fact RodadaAcabaTodosEncontrados {
-	all r: Rodada | r.acabou = Sim <=>  (all c: r.camuflado | one e: Encontrado | c.encontrado = e)
+	all r: Rodada | r.acabou in Sim <=>  (all c: r.camuflado | one e: Encontrado | c.encontrado = e)
 }
 
 fact RodadaNaoAcabaSemEncontrarTodos {
 	all r: Rodada, c: r.camuflado | one e: Escondido | c.encontrado = e implies r.acabou = Nao 
+}
+
+-- Jogador
+fact JogadorNaRodadaTemFuncao {
+	all j: Jogador | all r: Rodada | one f: Funcao | j in r.jogadores implies f in j.papel and f in (r.cacador + r.camuflado)
+}
+
+fact CamufladoEncontradoPorCacador {
+	all cm: Camuflado  | cm.encontrado in Encontrado implies (one cd: Cacador |  cm in cd.encontrados)
+}
+
+fact CamufladoEncontradoNaoFicaEscondido {
+	all cd: Cacador | all cm: cd.encontrados | cm.encontrado in Encontrado
+}
+
+fact CacadorSoEncontraCamufladoDaRodada {
+	all r: Rodada | all cd: r.cacador | all cm: cd.encontrados | cm in r.camuflado
 }
 
 -- Cor
@@ -76,7 +89,7 @@ fact CamufladoPintaCorArea {
 
 -- Pose
 fact PreparadoTemPose {
-	all c: Camuflado | one p: Preparado | c.preparado = p implies #c.pose = 1
+	all c: Camuflado | c.preparado in Preparado implies #c.pose = 1
 }
 
 -- Evitar Avulsos
@@ -105,4 +118,4 @@ fact SemAcabouAvulso {
 	all t: Terminou | one r: Rodada | t = r.acabou
 }
 
-run {#Rodada = 2 and #Cor = 2} for 10
+run {#Rodada = 3 and #Encontrado > 0} for 10 but 3 Rodada, 3 Terminou, 6 Jogador, 6 Funcao, 3 Cacador, 3 Camuflado, 3 EstadoEncontrado, 3 EstadoPreparo 
