@@ -48,9 +48,6 @@ abstract sig Terminou {}
 sig Sim, Nao extends Terminou {}
 
 -- Rodada
-fact SemRodadasSimultaneas {
-	lone r:Rodada | r.acabou in Nao
-}
 
 fact CardinalidadeRodada {
 	all r: Rodada | #(r.cacador + r.camuflado) = #r.jogadores
@@ -61,7 +58,7 @@ fact RodadaAcabaTodosEncontrados {
 }
 
 fact RodadaNaoAcabaSemEncontrarTodos {
-	all r: Rodada, c: r.camuflado | one e: Escondido | c.encontrado = e implies r.acabou = Nao 
+	all r: Rodada, c: r.camuflado | c.encontrado in Escondido implies r.acabou in Nao 
 }
 
 -- Jogador
@@ -79,6 +76,10 @@ fact CamufladoEncontradoNaoFicaEscondido {
 
 fact CacadorSoEncontraCamufladoDaRodada {
 	all r: Rodada | all cd: r.cacador | all cm: cd.encontrados | cm in r.camuflado
+}
+
+fact SoEncotradoPreparado {
+	all c: Camuflado | c.encontrado in Encontrado implies c.preparado in Preparado
 }
 
 -- Cor
@@ -118,4 +119,4 @@ fact SemAcabouAvulso {
 	all t: Terminou | one r: Rodada | t = r.acabou
 }
 
-run {#Rodada = 3 and #Encontrado > 0} for 10 but 3 Rodada, 3 Terminou, 6 Jogador, 6 Funcao, 3 Cacador, 3 Camuflado, 3 EstadoEncontrado, 3 EstadoPreparo 
+run {#Rodada = 3 and #Nao = 2} for 10 but 3 Rodada, 4 Terminou, 6 Jogador, 6 Funcao, 3 Cacador, 3 Camuflado, 3 EstadoEncontrado, 3 EstadoPreparo 
