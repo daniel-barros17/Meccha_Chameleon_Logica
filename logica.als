@@ -5,13 +5,20 @@ sig Jogador {
 abstract sig Funcao {
 }
 
+
 sig Cacador extends Funcao {
 	encontrados: set Camuflado
 }
 
-sig Pose {}
+sig Camuflado extends Funcao {
+	pose: lone Pose,
+	preparado: one EstadoPreparo,
+	encontrado: one EstadoEncontrado,
+	area: one Area,
+	cor: one Cor
+}
 
-sig Cor {}
+sig Pose {}
 
 abstract sig EstadoEncontrado {}
 sig Encontrado, Escondido extends EstadoEncontrado {}
@@ -22,20 +29,13 @@ sig Preparado, NaoPreparado extends EstadoPreparo {}
 abstract sig Area {
 	cor: one Cor
 }
-sig Camuflado extends Funcao {
-	pose: lone Pose,
-	preparado: one EstadoPreparo,
-	encontrado: one EstadoEncontrado,
-	area: one Area,
-	cor: one Cor
-}
-
-
 
 sig Parede extends Area {}
 sig Chao extends Area {}
 sig Objeto extends Area {}
 sig CenarioDecorativo extends Area {}
+
+sig Cor {}
 
 sig Rodada {
 	acabou: one Terminou,
@@ -54,7 +54,7 @@ fact CardinalidadeRodada {
 }
 
 fact RodadaAcabaTodosEncontrados {
-	all r: Rodada | r.acabou in Sim <=>  (all c: r.camuflado | one e: Encontrado | c.encontrado = e)
+	all r: Rodada | r.acabou in Sim <=>  (all c: r.camuflado | c.encontrado in Encontrado)
 }
 
 fact RodadaNaoAcabaSemEncontrarTodos {
@@ -63,7 +63,7 @@ fact RodadaNaoAcabaSemEncontrarTodos {
 
 -- Jogador
 fact JogadorNaRodadaTemFuncao {
-	all j: Jogador | all r: Rodada | one f: Funcao | j in r.jogadores implies f in j.papel and f in (r.cacador + r.camuflado)
+	all j: Jogador | all r: Rodada |  j in r.jogadores implies (one f: Funcao | f in j.papel and f in (r.cacador + r.camuflado))
 }
 
 fact CamufladoEncontradoPorCacador {
@@ -81,6 +81,11 @@ fact CacadorSoEncontraCamufladoDaRodada {
 fact SoEncotradoPreparado {
 	all c: Camuflado | c.encontrado in Encontrado implies c.preparado in Preparado
 }
+
+fact JogadorSoParticipaDeUmaRodadaSimultanea {
+	all j: Jogador | lone r: Rodada | j in r.jogadores and r.acabou in Nao
+}
+
 
 -- Cor
 
@@ -119,4 +124,4 @@ fact SemAcabouAvulso {
 	all t: Terminou | one r: Rodada | t = r.acabou
 }
 
-run {#Rodada = 3 and #Nao = 2} for 10 but 3 Rodada, 4 Terminou, 6 Jogador, 6 Funcao, 3 Cacador, 3 Camuflado, 3 EstadoEncontrado, 3 EstadoPreparo 
+run {#Rodada = 3} for 20
