@@ -105,7 +105,7 @@ fact RodadaNaoAcabaSemEncontrarTodos {
 // Todo jogador participando do jogo possui exatamente
 // um papel dentro de uma rodada.
 fact JogadorNaRodadaTemFuncao {
-	all j: Jogador | all r: Rodada |  j in r.jogadores implies (one f: Funcao | f in j.papel and f in (r.cacador + r.camuflado))
+	all j: Jogador | all r: Rodada |  j in r.jogadores implies (one f: Funcao | f in j.papel and FuncaoPertenceARodada[f,r])
 }
 
 // Todo camuflado com o estado de Encontrado
@@ -128,7 +128,7 @@ fact CacadorSoEncontraCamufladoDaRodada {
 
 // Um caçador só pode encontrar um camuflado que
 // esteja no estado de Preparado.
-fact SoEncotradoPreparado {
+fact SoEncotraPreparado {
 	all c: Camuflado | c.encontrado in Encontrado implies c.preparado in Preparado
 }
 
@@ -150,8 +150,8 @@ fact CamufladoPintaCorArea {
 
 // Todo camuflado preparado necessariamente deve
 // possuir exatamente uma pose.
-fact PreparadoTemPose {
-	all c: Camuflado | c.preparado in Preparado implies #c.pose = 1
+fact PreparadoTemApenasUmaPose {
+	all c: Camuflado | c.preparado in Preparado implies ApenasUmaPose[c]
 }
 
 -- Evitar Avulsos
@@ -159,7 +159,7 @@ fact PreparadoTemPose {
 // Evita que funções de Caçador e Camuflado não
 // estejam associadas a nenhum jogador.
 fact SemFuncaoSolta {
-	all f:Funcao | one r: Rodada |one j: Jogador | f in (r.cacador + r.camuflado) and f in j.papel
+	all f:Funcao | one r: Rodada |one j: Jogador | FuncaoPertenceARodada[f,r] and f in j.papel
 }
 
 // Evita que estados de Encontrado e NaoEncontrado
@@ -189,5 +189,23 @@ fact SemPoseAvulsa {
 fact SemAcabouAvulso {
 	all t: Terminou | one r: Rodada | t = r.acabou
 }
+
+
+
+pred ApenasUmaPose[c : Camuflado]{
+	#c.pose = 1
+}
+pred FuncaoPertenceARodada[f: Funcao, r: Rodada]{
+	f in FuncoesDaRodada[r]
+}
+
+fun FuncoesDaRodada[r: Rodada]: some Funcao{
+	r.cacador + r.camuflado
+}
+	
+
+
+
+
 
 run {#Rodada = 3} for 20
