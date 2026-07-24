@@ -246,9 +246,22 @@ assert SoEncontraQuemEstaPreparado {
 }
 check SoEncontraQuemEstaPreparado for 20
 
+// Confere se os camuflados são exclusivos por rodada
+assert CamufladoExlcusivoPorRodada {
+	all c: Camuflado | one r: Rodada | c in r.camuflado
+} 
+check CamufladoExlcusivoPorRodada for 20
 
+// Confere se os caçadores são exclusivos por rodada
+assert CacadorExclusivoPorRodada {
+	all cd: Cacador | one r: Rodada | cd in r.cacador
+}
+check CacadorExclusivoPorRodada for 20
 
-
-
+// Confere se não há camuflados encontrados que não estavam preparados
+assert CamufladoEncontradoNuncaEstaNaoPreparado { 
+	no c: Camuflado | c.encontrado in Encontrado and c.preparado in NaoPreparado
+}
+check CamufladoEncontradoNuncaEstaNaoPreparado for 20
 
 run {#Rodada = 3} for 20
