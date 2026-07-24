@@ -204,6 +204,49 @@ fun FuncoesDaRodada[r: Rodada]: some Funcao{
 }
 	
 
+// Confere se cada jogador possui apenas um
+// papel em cada rodada que participa. 
+assert PapelExclusivoPorRodada {
+	all j: Jogador, r: Rodada | j in r.jogadores implies (lone f: Funcao | f in j.papel and f in FuncoesDaRodada[r])
+}
+check PapelExclusivoPorRodada for 20
+
+// Confere se cada rodada tem pelo menos um
+// caçador e um camuflado.
+assert RodadaTemCacadorECamuflado {
+	all r: Rodada | some r.cacador and some r.camuflado
+}
+check RodadaTemCacadorECamuflado for 20
+
+// Confere se a cor usada pelo camuflado é
+// sempre a cor predominante da área escolhida.
+assert CorCamufladoIgualCorDaArea {
+	all c: Camuflado | c.cor = c.area.cor
+}
+check CorCamufladoIgualCorDaArea for 20
+
+// Confere se cada camuflado pode ser encontrado
+// por, no máximo, um caçador.
+assert CamufladoEncontradoNoMaximoUmaVez {
+	all c: Camuflado | lone cd: Cacador | c in cd.encontrados
+}
+check CamufladoEncontradoNoMaximoUmaVez for 20
+
+// Confere se uma rodada é finalizada se, e somente se,
+// todos os camuflados tiverem sido encontrados.
+assert RodadaAcabaSseTodosEncontrados {
+	all r: Rodada | r.acabou in Sim <=> (all c: r.camuflado | c.encontrado in Encontrado)
+}
+check RodadaAcabaSseTodosEncontrados for 20
+
+// Confere se os camuflados encontrados
+// estavam preparados.
+assert SoEncontraQuemEstaPreparado {
+	all c: Camuflado | c.encontrado in Encontrado implies c.preparado in Preparado
+}
+check SoEncontraQuemEstaPreparado for 20
+
+
 
 
 
