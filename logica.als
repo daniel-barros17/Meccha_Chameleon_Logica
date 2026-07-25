@@ -190,19 +190,40 @@ fact SemAcabouAvulso {
 	all t: Terminou | one r: Rodada | t = r.acabou
 }
 
+-- Predicados:
 
-
+// Verifica se um determinado camuflado possui exatamente uma pose.
+//
+// Parâmetro:
+// c: Camuflado
 pred ApenasUmaPose[c : Camuflado]{
 	#c.pose = 1
 }
+
+// Verifica se uma determinada função pertence às funções
+// desempenhadas pelos jogadores em uma rodada.
+// 
+// Parâmetros:
+// f: Funcao; r: Rodada
 pred FuncaoPertenceARodada[f: Funcao, r: Rodada]{
 	f in FuncoesDaRodada[r]
 }
 
+-- Função:
+
+// Retorna o conjunto de funções presentes em uma determinada
+// rodada.
+// 
+// Parâmetro:
+// r: Rodada
+// 
+// O retorno será:
+// - os Caçadores da rodada + os Camuflados da rodada
 fun FuncoesDaRodada[r: Rodada]: some Funcao{
 	r.cacador + r.camuflado
 }
-	
+
+-- Asserts:
 
 // Confere se cada jogador possui apenas um
 // papel em cada rodada que participa. 
