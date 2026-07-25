@@ -24,11 +24,13 @@ abstract sig Funcao {
 
 
 // Função que será responsável por procurar os camuflados.
+// Contém conjunto de camuflados encontrads por esse Caçador.
 sig Cacador extends Funcao {
 	encontrados: set Camuflado
 }
 
 // Função que será responsável por esconder-se dos caçadores.
+// Contém uma pose (opcional no inicio da rodada, obrigatório no fim, ver fato), estados de preparo e encontro, e uma área/cor.
 sig Camuflado extends Funcao {
 	pose: lone Pose,
 	preparado: one EstadoPreparo,
@@ -67,6 +69,7 @@ sig CenarioDecorativo extends Area {}
 sig Cor {}
 
 // Representa uma partida do jogo.
+// Contém pelo menos um caçador e camuflado.
 sig Rodada {
 	acabou: one Terminou,
 	cacador: some Cacador,
@@ -255,10 +258,10 @@ check CamufladoEncontradoNoMaximoUmaVez for 20
 
 // Confere se uma rodada é finalizada se, e somente se,
 // todos os camuflados tiverem sido encontrados.
-assert RodadaAcabaSseTodosEncontrados {
+assert RodadaAcabaSeTodosEncontrados {
 	all r: Rodada | r.acabou in Sim <=> (all c: r.camuflado | c.encontrado in Encontrado)
 }
-check RodadaAcabaSseTodosEncontrados for 20
+check RodadaAcabaSeTodosEncontrados for 20
 
 // Confere se os camuflados encontrados
 // estavam preparados.
@@ -284,5 +287,12 @@ assert CamufladoEncontradoNuncaEstaNaoPreparado {
 	no c: Camuflado | c.encontrado in Encontrado and c.preparado in NaoPreparado
 }
 check CamufladoEncontradoNuncaEstaNaoPreparado for 20
+
+// Confere se não há camuflados escondidos na lista "encontrados"
+assert CamufladoEscondidoNaoEstaEmEncontrados {
+	no cd: Cacador, c: Camuflado | c in cd.encontrados and c.encontrado in Escondido
+}
+
+check CamufladoEscondidoNaoEstaEmEncontrados for 20
 
 run {#Rodada = 3} for 20
